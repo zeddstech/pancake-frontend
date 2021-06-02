@@ -39,11 +39,201 @@ const farms: FarmConfig[] = [
    * V3 by order of release (some may be out of PID order due to multiplier boost)
    */
   {
-    pid: 382,
+    pid: 400,
+    lpSymbol: 'KTN-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0x48028de4a9b0d3d91180333d796021ec7757ba1b',
+    },
+    token: tokens.ktn,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 399,
+    lpSymbol: 'MTRG-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x4dcA4D427511bC327639b222DA18FA5e334F686F',
+    },
+    token: tokens.mtrg,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 398,
+    lpSymbol: 'SWG-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0x226af4e918fcf3e62e5eeec867a3e78aaa7bb01d',
+    },
+    token: tokens.swg,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 397,
+    lpSymbol: 'TUSD-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x2e28b9b74d6d99d4697e913b82b41ef1cac51c6c',
+    },
+    token: tokens.tusd,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 396,
+    lpSymbol: 'VRT-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xef5212ada83ec2cc105c409df10b8806d20e3b35',
+    },
+    token: tokens.vrt,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 395,
+    lpSymbol: 'EZ-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0x51bf99bbae59b67e5ce2fa9c17b683384773f8b3',
+    },
+    token: tokens.ez,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 394,
+    lpSymbol: 'KALM-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xc74f7243766269dec5b85b0ef4af186e909c1b06',
+    },
+    token: tokens.kalm,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 393,
+    lpSymbol: 'pOPEN-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0x1090c996fd1490d15dd7906322ee676a5cc3cf82',
+    },
+    token: tokens.popen,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 335,
+    lpSymbol: 'LIEN-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xa4963B38b271c0D714593063497Fc786Fa4029Ce',
+    },
+    token: tokens.lien,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 392,
+    lpSymbol: 'WELL-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x1d94cb25895abd6ccfef863c53372bb462aa6b86',
+    },
+    token: tokens.well,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 391,
+    lpSymbol: 'DERI-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0xdc7188ac11e124b1fa650b73ba88bf615ef15256',
+    },
+    token: tokens.deri,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 390,
+    lpSymbol: 'CHR-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x6045931e511ef7e53a4a817f971e0ca28c758809',
+    },
+    token: tokens.chr,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 389,
+    lpSymbol: 'CAKE-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0x804678fa97d91B974ec2af3c843270886528a9E6',
+    },
+    token: tokens.cake,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 388,
+    lpSymbol: 'CYC-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xecf30fbecfa642012f54212a3be92eef1e48edac',
+    },
+    token: tokens.cyc,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 387,
+    lpSymbol: 'XEND-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xcecfc2789af72ed151589a96a59f3a1abc65c3b5',
+    },
+    token: tokens.xend,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 296,
+    lpSymbol: 'HGET-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xF74ee1e10e097dc326a2ad004F9Cc95CB71088d3',
+    },
+    token: tokens.hget,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 386,
+    lpSymbol: 'HOTCROSS-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0xf23bad605e94de0e3b60c9718a43a94a5af43915',
+    },
+    token: tokens.hotcross,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 385,
+    lpSymbol: 'RFOX-BNB LP',
+    lpAddresses: {
+      97: '',
+      56: '0x8e04b3972b5c25766c681dfd30a8a1cbf6dcc8c1',
+    },
+    token: tokens.rfox,
+    quoteToken: tokens.wbnb,
+  },
+  {
+    pid: 384,
+    lpSymbol: 'WMASS-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0xec95ff6281c3ad8e27372fa6675eb337640b8e5e',
+    },
+    token: tokens.wmass,
+    quoteToken: tokens.busd,
+  },
+  {
+    pid: 383,
     lpSymbol: 'UBXT-BUSD LP',
     lpAddresses: {
       97: '',
-      56: '0x81fef06b20ca041041e6defeb59f79ed87e7eb0d',
+      56: '0x8d3ff27d2ad6a9556b7c4f82f4d602d20114bc90',
     },
     token: tokens.ubxt,
     quoteToken: tokens.busd,
@@ -539,16 +729,6 @@ const farms: FarmConfig[] = [
     quoteToken: tokens.wbnb,
   },
   {
-    pid: 335,
-    lpSymbol: 'LIEN-BNB LP',
-    lpAddresses: {
-      97: '',
-      56: '0xa4963B38b271c0D714593063497Fc786Fa4029Ce',
-    },
-    token: tokens.lien,
-    quoteToken: tokens.wbnb,
-  },
-  {
     pid: 334,
     lpSymbol: 'ZIL-BNB LP',
     lpAddresses: {
@@ -896,16 +1076,6 @@ const farms: FarmConfig[] = [
       56: '0x1F37d4226d23d09044B8005c127C0517BD7e94fD',
     },
     token: tokens.lit,
-    quoteToken: tokens.wbnb,
-  },
-  {
-    pid: 296,
-    lpSymbol: 'HGET-BNB LP',
-    lpAddresses: {
-      97: '',
-      56: '0xF74ee1e10e097dc326a2ad004F9Cc95CB71088d3',
-    },
-    token: tokens.hget,
     quoteToken: tokens.wbnb,
   },
   {

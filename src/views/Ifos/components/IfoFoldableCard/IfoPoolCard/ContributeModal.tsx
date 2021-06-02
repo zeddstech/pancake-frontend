@@ -12,6 +12,7 @@ import ApproveConfirmButtons from 'views/Profile/components/ApproveConfirmButton
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
 import { DEFAULT_TOKEN_DECIMAL } from 'config'
 import { useERC20 } from 'hooks/useContract'
+import { BIG_NINE, BIG_TEN } from 'utils/bigNumber'
 
 interface Props {
   poolId: PoolIds
@@ -24,6 +25,9 @@ interface Props {
 }
 
 const multiplierValues = [0.1, 0.25, 0.5, 0.75, 1]
+
+// Default value for transaction setting, tweak based on BSC network congestion.
+const gasPrice = BIG_TEN.times(BIG_TEN.pow(BIG_NINE)).toString()
 
 const ContributeModal: React.FC<Props> = ({
   poolId,
@@ -61,12 +65,12 @@ const ContributeModal: React.FC<Props> = ({
       onApprove: () => {
         return raisingTokenContract.methods
           .approve(contract.options.address, ethers.constants.MaxUint256)
-          .send({ from: account })
+          .send({ from: account, gasPrice })
       },
       onConfirm: () => {
         return contract.methods
           .depositPool(valueWithTokenDecimals.toString(), poolId === PoolIds.poolBasic ? 0 : 1)
-          .send({ from: account })
+          .send({ from: account, gasPrice })
       },
       onSuccess: async () => {
         await onSuccess(valueWithTokenDecimals)
@@ -84,7 +88,7 @@ const ContributeModal: React.FC<Props> = ({
   })()
 
   return (
-    <Modal title={`Contribute ${currency.symbol}`} onDismiss={onDismiss}>
+    <Modal title={t('Contribute %symbol%', { symbol: currency.symbol })} onDismiss={onDismiss}>
       <ModalBody maxWidth="320px">
         {limitPerUserInLP.isGreaterThan(0) && (
           <Flex justifyContent="space-between" mb="16px">
@@ -93,7 +97,7 @@ const ContributeModal: React.FC<Props> = ({
           </Flex>
         )}
         <Flex justifyContent="space-between" mb="8px">
-          <Text>{t('Commit:')}</Text>
+          <Text>{t('Commit')}:</Text>
           <Flex flexGrow={1} justifyContent="flex-end">
             <Image
               src={`/images/farms/${currency.symbol.split(' ')[0].toLocaleLowerCase()}.svg`}
@@ -111,7 +115,9 @@ const ContributeModal: React.FC<Props> = ({
           mb="8px"
         />
         <Text color="textSubtle" textAlign="right" fontSize="12px" mb="16px">
-          Balance: {formatNumber(getBalanceNumber(userCurrencyBalance, currency.decimals), 2, 5)}
+          {t('Balance: %balance%', {
+            balance: formatNumber(getBalanceNumber(userCurrencyBalance, currency.decimals), 2, 5),
+          })}
         </Text>
         <Flex justifyContent="space-between" mb="16px">
           {multiplierValues.map((multiplierValue, index) => (
@@ -122,7 +128,7 @@ const ContributeModal: React.FC<Props> = ({
               onClick={() => setValue(getBalanceNumber(maximumLpCommitable.times(multiplierValue)).toString())}
               mr={index < multiplierValues.length - 1 ? '8px' : 0}
             >
-              {t(`${multiplierValue * 100}%`)}
+              {multiplierValue * 100}%
             </Button>
           ))}
         </Flex>

@@ -5,11 +5,13 @@ import { useLocation } from 'react-router-dom'
 import UnlockButton from 'components/UnlockButton'
 import { useWeb3React } from '@web3-react/core'
 import { useFarmUser } from 'state/hooks'
+import { fetchFarmUserDataAsync } from 'state/farms'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import { useTranslation } from 'contexts/Localization'
 import { useApprove } from 'hooks/useApprove'
 import { getBep20Contract } from 'utils/contractHelpers'
 import { BASE_ADD_LIQUIDITY_URL } from 'config'
+import { useAppDispatch } from 'state'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import useStake from 'hooks/useStake'
@@ -54,6 +56,16 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   })
   const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
 
+  const handleStake = async (amount: string) => {
+    await onStake(amount)
+    dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+  }
+
+  const handleUnstake = async (amount: string) => {
+    await onUnstake(amount)
+    dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+  }
+
   const displayBalance = useCallback(() => {
     const stakedBalanceNumber = getBalanceNumber(stakedBalance)
     if (stakedBalanceNumber > 0 && stakedBalanceNumber < 0.0001) {
@@ -63,29 +75,32 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   }, [stakedBalance])
 
   const [onPresentDeposit] = useModal(
-    <DepositModal max={tokenBalance} onConfirm={onStake} tokenName={lpSymbol} addLiquidityUrl={addLiquidityUrl} />,
+    <DepositModal max={tokenBalance} onConfirm={handleStake} tokenName={lpSymbol} addLiquidityUrl={addLiquidityUrl} />,
   )
-  const [onPresentWithdraw] = useModal(<WithdrawModal max={stakedBalance} onConfirm={onUnstake} tokenName={lpSymbol} />)
-
+  const [onPresentWithdraw] = useModal(
+    <WithdrawModal max={stakedBalance} onConfirm={handleUnstake} tokenName={lpSymbol} />,
+  )
   const lpContract = getBep20Contract(lpAddress, web3)
-
+  const dispatch = useAppDispatch()
   const { onApprove } = useApprove(lpContract)
 
   const handleApprove = useCallback(async () => {
     try {
       setRequestedApproval(true)
       await onApprove()
+      dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+
       setRequestedApproval(false)
     } catch (e) {
       console.error(e)
     }
-  }, [onApprove])
+  }, [onApprove, dispatch, account, pid])
 
   if (!account) {
     return (
       <ActionContainer>
         <ActionTitles>
-          <Subtle>{t('START FARMING')}</Subtle>
+          <Subtle>{t('Start Farming').toUpperCase()}</Subtle>
         </ActionTitles>
         <ActionContent>
           <UnlockButton width="100%" />
@@ -100,7 +115,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
         <ActionContainer>
           <ActionTitles>
             <Title>{lpSymbol} </Title>
-            <Subtle>{t('STAKED')}</Subtle>
+            <Subtle>{t('Staked').toUpperCase()}</Subtle>
           </ActionTitles>
           <ActionContent>
             <div>
@@ -126,7 +141,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
     return (
       <ActionContainer>
         <ActionTitles>
-          <Subtle>{t('STAKE')} </Subtle>
+          <Subtle>{t('Stake').toUpperCase()} </Subtle>
           <Title>{lpSymbol}</Title>
         </ActionTitles>
         <ActionContent>
@@ -147,7 +162,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
     return (
       <ActionContainer>
         <ActionTitles>
-          <Subtle>{t('START FARMING')}</Subtle>
+          <Subtle>{t('Start Farming').toUpperCase()}</Subtle>
         </ActionTitles>
         <ActionContent>
           <Skeleton width={180} marginBottom={28} marginTop={14} />
@@ -159,7 +174,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   return (
     <ActionContainer>
       <ActionTitles>
-        <Subtle>{t('ENABLE FARM')}</Subtle>
+        <Subtle>{t('Enable Farm').toUpperCase()}</Subtle>
       </ActionTitles>
       <ActionContent>
         <Button width="100%" disabled={requestedApproval} onClick={handleApprove} variant="secondary">

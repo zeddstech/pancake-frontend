@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { Flex, CardFooter, ExpandableLabel, HelpIcon, useTooltip, Box } from '@pancakeswap/uikit'
+import { Flex, CardFooter, ExpandableLabel, HelpIcon, useTooltip } from '@pancakeswap/uikit'
 import { Pool } from 'state/types'
 import { CompoundingPoolTag, ManualPoolTag } from 'components/Tags'
 import ExpandedFooter from './ExpandedFooter'
@@ -10,7 +10,6 @@ import ExpandedFooter from './ExpandedFooter'
 interface FooterProps {
   pool: Pool
   account: string
-  isAutoVault?: boolean
   totalCakeInVault?: BigNumber
 }
 
@@ -22,7 +21,8 @@ const ExpandableButtonWrapper = styled(Flex)`
   }
 `
 
-const Footer: React.FC<FooterProps> = ({ pool, account, isAutoVault = false }) => {
+const Footer: React.FC<FooterProps> = ({ pool, account }) => {
+  const { isAutoVault } = pool
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -32,7 +32,7 @@ const Footer: React.FC<FooterProps> = ({ pool, account, isAutoVault = false }) =
   )
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(isAutoVault ? autoTooltipText : manualTooltipText, {
-    placement: 'bottom-end',
+    placement: 'bottom',
   })
 
   return (
@@ -41,15 +41,15 @@ const Footer: React.FC<FooterProps> = ({ pool, account, isAutoVault = false }) =
         <Flex alignItems="center">
           {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
           {tooltipVisible && tooltip}
-          <Box ref={targetRef}>
+          <Flex ref={targetRef}>
             <HelpIcon ml="4px" width="20px" height="20px" color="textSubtle" />
-          </Box>
+          </Flex>
         </Flex>
         <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? t('Hide') : t('Details')}
         </ExpandableLabel>
       </ExpandableButtonWrapper>
-      {isExpanded && <ExpandedFooter pool={pool} account={account} isAutoVault={isAutoVault} />}
+      {isExpanded && <ExpandedFooter pool={pool} account={account} />}
     </CardFooter>
   )
 }

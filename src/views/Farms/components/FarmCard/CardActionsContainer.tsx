@@ -2,9 +2,11 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { provider as ProviderType } from 'web3-core'
 import BigNumber from 'bignumber.js'
+import { Button, Flex, Text } from '@pancakeswap/uikit'
 import { getAddress } from 'utils/addressHelpers'
 import { getBep20Contract } from 'utils/contractHelpers'
-import { Button, Flex, Text } from '@pancakeswap/uikit'
+import { useAppDispatch } from 'state'
+import { fetchFarmUserDataAsync } from 'state/farms'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import useWeb3 from 'hooks/useWeb3'
@@ -45,6 +47,7 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
   const lpName = farm.lpSymbol.toUpperCase()
   const isApproved = account && allowance && allowance.isGreaterThan(0)
   const web3 = useWeb3()
+  const dispatch = useAppDispatch()
 
   const lpContract = getBep20Contract(lpAddress, web3)
 
@@ -54,11 +57,12 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
     try {
       setRequestedApproval(true)
       await onApprove()
+      dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
       setRequestedApproval(false)
     } catch (e) {
       console.error(e)
     }
-  }, [onApprove])
+  }, [onApprove, dispatch, account, pid])
 
   const renderApprovalOrStakeButton = () => {
     return isApproved ? (
@@ -80,7 +84,6 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
     <Action>
       <Flex>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="3px">
-          {/* TODO: Is there a way to get a dynamic value here from useFarmFromSymbol? */}
           CAKE
         </Text>
         <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">

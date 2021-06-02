@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, CardBody, Flex, Text } from '@pancakeswap/uikit'
+import { Box, CardBody, Flex, Text, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
 import UnlockButton from 'components/UnlockButton'
-import { useCakeVault, usePriceCakeBusd } from 'state/hooks'
+import { useCakeVault } from 'state/hooks'
 import { Pool } from 'state/types'
 import AprRow from '../PoolCard/AprRow'
 import { StyledCard, StyledCardInner } from '../PoolCard/StyledCard'
@@ -25,15 +25,14 @@ interface CakeVaultProps {
 
 const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
   const { account } = useWeb3React()
   const {
     userData: { userShares, isLoading: isVaultUserDataLoading },
     fees: { performanceFee },
   } = useCakeVault()
-  //   Estimate & manual for now. 288 = once every 5 mins. We can change once we have a better sense of this
-  const timesCompoundedDaily = 288
+
   const accountHasSharesStaked = userShares && userShares.gt(0)
-  const cakePriceBusd = usePriceCakeBusd()
   const isLoading = !pool.userData || isVaultUserDataLoading
   const performanceFeeAsDecimal = performanceFee && performanceFee / 100
 
@@ -42,7 +41,7 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
   }
 
   return (
-    <StyledCard isPromotedPool>
+    <StyledCard isPromoted={{ isDesktop: isXl }}>
       <StyledCardInner isPromotedPool>
         <StyledCardHeader
           isPromotedPool
@@ -52,20 +51,14 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
           stakingTokenSymbol="CAKE"
         />
         <StyledCardBody isLoading={isLoading}>
-          <AprRow
-            pool={pool}
-            stakingTokenPrice={cakePriceBusd.toNumber()}
-            isAutoVault
-            compoundFrequency={timesCompoundedDaily}
-            performanceFee={performanceFeeAsDecimal}
-          />
+          <AprRow pool={pool} performanceFee={performanceFeeAsDecimal} />
           <Box mt="24px">
             <RecentCakeProfitRow />
           </Box>
           <Box mt="8px">
             <UnstakingFeeCountdownRow />
           </Box>
-          <Flex mt="24px" flexDirection="column">
+          <Flex mt="32px" flexDirection="column">
             {account ? (
               <VaultCardActions pool={pool} accountHasSharesStaked={accountHasSharesStaked} isLoading={isLoading} />
             ) : (
@@ -78,7 +71,7 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
             )}
           </Flex>
         </StyledCardBody>
-        <CardFooter pool={pool} account={account} isAutoVault />
+        <CardFooter pool={pool} account={account} />
       </StyledCardInner>
     </StyledCard>
   )
