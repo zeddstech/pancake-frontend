@@ -3,17 +3,19 @@ import { Interface } from '@ethersproject/abi'
 import web3NoAccount from 'utils/web3'
 import { getMulticallContract } from 'utils/contractHelpers'
 
-interface Call {
+export interface Call {
   address: string // Address of the contract
   name: string // Function name on the contract (example: balanceOf)
   params?: any[] // Function params
 }
 
-interface MulticallOptions {
+export interface MulticallOptions {
   web3?: Web3
   blockNumber?: number
   requireSuccess?: boolean
 }
+
+export type MultiCallV2Result<T> = { result: boolean; data: T }
 
 const multicall = async (abi: any[], calls: Call[], options: MulticallOptions = {}) => {
   try {
