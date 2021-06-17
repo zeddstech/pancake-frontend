@@ -2,9 +2,11 @@ import BigNumber from 'bignumber.js'
 import { DEFAULT_GAS_LIMIT, DEFAULT_TOKEN_DECIMAL } from 'config'
 import { ethers } from 'ethers'
 import pools from 'config/constants/pools'
+import sousChefV2 from 'config/abi/sousChefV2.json'
 import { BIG_TEN, BIG_ZERO } from './bigNumber'
 import { web3WithArchivedNodeProvider } from './web3'
-import { getSouschefV2Contract } from './contractHelpers'
+import { getAddress } from './addressHelpers'
+import multicall from './multicall'
 
 export const approve = async (lpContract, masterChefContract, account) => {
   return lpContract.methods
@@ -124,16 +126,6 @@ export const soushHarvestBnb = async (sousChefContract, account) => {
     })
 }
 
-export const isPoolActive = async (sousId: number, block?: number) => {
-  const contract = getSouschefV2Contract(sousId, web3WithArchivedNodeProvider)
-  const startBlockResp = await contract.methods.startBlock().call()
-  const endBlockResp = await contract.methods.bonusEndBlock().call()
-  const startBlock = new BigNumber(startBlockResp)
-  const endBlock = new BigNumber(endBlockResp)
-
-  return startBlock.lte(block) && endBlock.gte(block)
-}
-
 /**
  * Returns the total number of pools that were active at a given block
  */
@@ -142,17 +134,29 @@ export const getActivePools = async (block?: number) => {
     .filter((pool) => pool.sousId !== 0)
     .filter((pool) => pool.isFinished === false || pool.isFinished === undefined)
   const blockNumber = block || (await web3WithArchivedNodeProvider.eth.getBlockNumber())
-  const poolsCheck = await Promise.allSettled(eligiblePools.map(({ sousId }) => isPoolActive(sousId, blockNumber)))
+  const startBlockCalls = eligiblePools.map(({ contractAddress }) => ({
+    address: getAddress(contractAddress),
+    name: 'startBlock',
+  }))
+  const endBlockCalls = eligiblePools.map(({ contractAddress }) => ({
+    address: getAddress(contractAddress),
+    name: 'bonusEndBlock',
+  }))
+  const startBlocks = await multicall(sousChefV2, startBlockCalls)
+  const endBlocks = await multicall(sousChefV2, endBlockCalls)
 
-  return poolsCheck.reduce((accum, poolCheck, index) => {
-    if (poolCheck.status === 'rejected') {
+  return eligiblePools.reduce((accum, poolCheck, index) => {
+    const startBlock = startBlocks[index] ? new BigNumber(startBlocks[index]) : null
+    const endBlock = endBlocks[index] ? new BigNumber(endBlocks[index]) : null
+
+    if (!startBlock || !endBlock) {
       return accum
     }
 
-    if (poolCheck.value === false) {
+    if (startBlock.gte(blockNumber) || endBlock.lte(blockNumber)) {
       return accum
     }
 
-    return [...accum, eligiblePools[index]]
+    return [...accum, poolCheck]
   }, [])
 }
