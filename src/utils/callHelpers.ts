@@ -138,11 +138,10 @@ export const isPoolActive = async (sousId: number, block?: number) => {
  * Returns the total number of pools that were active at a given block
  */
 export const getActivePools = async (block?: number) => {
-  const archivedWeb3 = web3WithArchivedNodeProvider
   const eligiblePools = pools
     .filter((pool) => pool.sousId !== 0)
     .filter((pool) => pool.isFinished === false || pool.isFinished === undefined)
-  const blockNumber = block || (await archivedWeb3.eth.getBlockNumber())
+  const blockNumber = block || (await web3WithArchivedNodeProvider.eth.getBlockNumber())
   const poolsCheck = await Promise.allSettled(eligiblePools.map(({ sousId }) => isPoolActive(sousId, blockNumber)))
 
   return poolsCheck.reduce((accum, poolCheck, index) => {
