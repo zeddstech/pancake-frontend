@@ -321,7 +321,7 @@ export interface Vote {
   }
 }
 
-export enum VotingStatus {
+export enum VotingStateLoadingStatus {
   INITIAL = 'initial',
   IDLE = 'idle',
   LOADING = 'loading',
@@ -329,10 +329,11 @@ export enum VotingStatus {
 }
 
 export interface VotingState {
+  proposalLoadingStatus: VotingStateLoadingStatus
   proposals: {
     [key: string]: Proposal
   }
-  voteStatus: VotingStatus
+  voteLoadingStatus: VotingStateLoadingStatus
   votes: {
     [key: string]: Vote[]
   }
